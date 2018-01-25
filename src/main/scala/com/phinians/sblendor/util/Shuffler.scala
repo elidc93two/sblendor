@@ -1,6 +1,6 @@
 package com.phinians.sblendor.util
 
-import com.phinians.sblendor.points._
+import com.phinians.sblendor.consumables._
 
 object Shuffler {
 
@@ -23,7 +23,11 @@ object Shuffler {
 
   def setupTokens(count: Int): List[Token] = {
 
-    List(Emerald, Emerald, Onyx, Sapphire, Gold)
+    List(Emerald, Emerald, Emerald, Emerald, Emerald) ++
+    List(Ruby, Ruby, Ruby, Ruby, Ruby) ++
+    List(Sapphire, Sapphire, Sapphire, Sapphire, Sapphire) ++
+    List(Onyx, Onyx, Onyx, Onyx, Onyx) ++
+    List(Gold, Gold, Gold, Gold, Gold)
 
   }
 

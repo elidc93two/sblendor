@@ -1,3 +1,3 @@
-package com.phinians.sblendor.points
+package com.phinians.sblendor.consumables
 
 case class Noble(prestigePoints: Int, cost: Token*)

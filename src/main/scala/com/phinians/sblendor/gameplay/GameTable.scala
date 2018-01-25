@@ -1,27 +1,39 @@
 package com.phinians.sblendor.gameplay
 
-import com.phinians.sblendor.points.{Development, Gem, Noble, Token}
+import com.phinians.sblendor.consumables.{Development, Gem, Noble, Token}
 import com.phinians.sblendor.util.Shuffler
 
-class GameTable(players: Player*) {
+import scala.collection.mutable.ListBuffer
+
+object GameTable {
+  def apply(players: List[Player]): GameTable = {
+    val gameTable = new GameTable()
+    gameTable.setup(players)
+    gameTable
+  }
+
+}
+
+class GameTable() {
 
   private var _tier1: Set[Development] = Set.empty
   private var _tier2: Set[Development] = Set.empty
   private var _tier3: Set[Development] = Set.empty
-  private var _tokens: List[Token] = List.empty
+  private var _tokens: ListBuffer[Token] = ListBuffer.empty
   private var _nobles: Set[Noble] = Set.empty
   private var _players: List[Player] = List.empty
   private var _history: List[Action] = List.empty
 
-  private def setup(): Unit = {
-    val playersCount: Int = setPlayers(players:_*).size
+  def setup(players: List[Player]): Unit = {
+    val playersCount: Int = setPlayers(players).size
     shuffleDevelopments()
     shuffleNobles(playersCount)
     setTokens(playersCount)
   }
 
-  private def setPlayers(players: Player*): List[Player] = {
-    _players ++ players
+  private def setPlayers(players: List[Player]) = {
+    _players ++= players
+    _players
   }
 
   private def shuffleDevelopments(): Unit = {
@@ -31,37 +43,23 @@ class GameTable(players: Player*) {
     _tier3 = developments._3
   }
 
-  private def shuffleNobles(count: Int): Unit = {
+  private def shuffleNobles(count: Int): Set[Noble] = {
     _nobles = Shuffler.shuffleNobles(count)
+    _nobles
   }
 
-  private def setTokens(count: Int): Unit = {
-    _tokens = Shuffler.setupTokens(count)
+  private def setTokens(count: Int): List[Token] = {
+    _tokens ++= Shuffler.setupTokens(count)
+    _tokens.toList
   }
 
-  private def getTokens(action: Action): Gem = {
-    action match {
-      case Get2SameGems(gem: Gem) => gem
-      case Get3DifferentGems(gems: Gem) => gems
-    }
+  def tokens: List[Token] = {
+    _tokens.toList
   }
 
-  def evaluate(action: Action): String = {
-    action match {
-      case BuyDevelopment(dev) =>
-        println(s"$dev bought, is player's gem enough, put on the players bought")
-        "bought, is player's gem enough, put on the players bought"
-      case ReserveDevelopment(dev) =>
-        println(s"$dev reserve, give gold")
-        "reserve, give gold"
-      case Get2SameGems(gem) =>
-        println(s"get 2 $gem")
-        "get 2"
-      case Get3DifferentGems(gems) =>
-        Token.evaluate(_tokens, gems)
-        println(s"get 3 $gems")
-        "get 3"
-      case _ => ""
-    }
+  def removeGem(gem: Gem) = {
+    _tokens -= gem
   }
+
+
 }

@@ -1,4 +1,4 @@
-package com.phinians.sblendor.points
+package com.phinians.sblendor.consumables
 
 sealed trait Token
 sealed trait Gem extends Token
