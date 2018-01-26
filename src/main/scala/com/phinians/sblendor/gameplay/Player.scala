@@ -13,9 +13,20 @@ case class Player(name: String,
   def play(action: Action, gameTable: GameTable) = {
     action match {
       case Get3DifferentGems(gem1, gem2, gem3) => {
-        val thereIsAGem: Gem => Boolean = gem => gameTable.tokens.count(_ == gem) > 0
+        val isAvailableToGet: Gem => Boolean = gem => gameTable.tokens.count(_ == gem) > 0
         List(gem1, gem2, gem3) map { g =>
-          if (thereIsAGem(g)) {
+          if (isAvailableToGet(g)) {
+            gameTable.removeGem(g)
+          } else {
+            throw new Exception(s"Unable to get because it has 0")
+          }
+        }
+      }
+      case Get2SameGems(gem) => {
+        val isAvailableToGet: Gem => Boolean = gem => gameTable.tokens.count(_ == gem) > 0
+        val isMoreThan4: Gem => Boolean = gem => gameTable.tokens.count(_ == gem) >= 4
+        List(gem, gem) map { g =>
+          if (isAvailableToGet(g) && isMoreThan4(gem)) {
             gameTable.removeGem(g)
           } else {
             throw new Exception(s"Unable to get because it has 0")

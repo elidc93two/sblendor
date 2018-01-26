@@ -11,7 +11,6 @@ object GameTable {
     gameTable.setup(players)
     gameTable
   }
-
 }
 
 class GameTable() {
