@@ -1,3 +1,3 @@
 package com.phinians.sblendor.consumables
 
-case class Development(bonus: Token, prestigePoints: Int, cost: Token*)
+case class Development(id: String, bonus: Token, prestigePoints: Int, cost: Token*)
