@@ -1,64 +1,26 @@
 package com.phinians.sblendor.gameplay
 
-import com.phinians.sblendor.consumables.{Development, Gem, Noble, Token}
-import com.phinians.sblendor.util.Shuffler
+import com.phinians.sblendor.model._
 
-import scala.collection.mutable.ListBuffer
+object GameTable extends Rules {
 
-object GameTable {
-  def apply(players: List[Player]): GameTable = {
-    val gameTable = new GameTable()
-    gameTable.setup(players)
-    gameTable
-  }
-}
-
-class GameTable() {
-
-  private var _tier1: Set[Development] = Set.empty
-  private var _tier2: Set[Development] = Set.empty
-  private var _tier3: Set[Development] = Set.empty
-  private var _tokens: ListBuffer[Token] = ListBuffer.empty
-  private var _nobles: Set[Noble] = Set.empty
-  private var _players: List[Player] = List.empty
-  private var _history: List[Action] = List.empty
-
-  def setup(players: List[Player]): Unit = {
-    val playersCount: Int = setPlayers(players).size
-    shuffleDevelopments()
-    shuffleNobles(playersCount)
-    setTokens(playersCount)
+  def mainPhase(who: Player, what: PlayerAction): PlayResult = {
+    println(s"TURN: Player ${who.name}, Action: $what")
+    what match {
+      case action: Get3DifferentGems => get3DifferentGems(who, action)
+      case action: Get2SameGems => get2SameGems(who, action)
+      case _ => throw new Exception("what do you want to do in life young Padawan?")
+    }
   }
 
-  private def setPlayers(players: List[Player]) = {
-    _players ++= players
-    _players
+  // after player ends turn, board should reflect the changes in the global variable
+  def endPhase(who: Player, result: PlayResult) = {
+    println(s"TURN: Player ${who.name}, Action: $result")
+    result match {
+      case Success(action: Get3DifferentGems) => decrease3DifferentGems(who, action)
+      case Success(action: Get2SameGems) => decrease2SameGems(who, action)
+      case e: Failed => throw new Exception(s"use the force because failed: ${e.reason}")
+    }
   }
-
-  private def shuffleDevelopments(): Unit = {
-    val developments = Shuffler.shuffleDevelopments()
-    _tier1 = developments._1
-    _tier2 = developments._2
-    _tier3 = developments._3
-  }
-
-  private def shuffleNobles(count: Int): Set[Noble] = {
-    _nobles = Shuffler.shuffleNobles(count)
-    _nobles
-  }
-
-  private def setTokens(count: Int): List[Token] = {
-    _tokens ++= Shuffler.setupTokens(count)
-    _tokens.toList
-  }
-
-  def tokens: List[Token] = {
-    _tokens.toList
-  }
-
-  def removeGem(gem: Gem) = {
-    _tokens -= gem
-  }
-
 
 }
